@@ -36,7 +36,7 @@ for df in df_data:
 
 # instantiate API
 
-api = NativeApi("https://archive.data.jhu.edu", "5dc6a0aa-dd4e-4234-82a1-88069b58a6af")
+api = NativeApi("https://archive.data.jhu.edu", #API-KEY)
 
 # create and publish dataverses first 
 
