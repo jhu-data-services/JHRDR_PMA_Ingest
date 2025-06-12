@@ -57,6 +57,6 @@ Below are the steps taken to batch upload the PMA data into JHRDR:
 	- `python fill_[collectionname]_codebook_csv.py` 
 	- `python ingest_[collectionname]_codebook.py`
 	- `python fill_[collectionname]_dataset_csv.py`
-	- `pythong find_file_mismatches.py` - this script checks for any files that are listed in the metadata sheet but not found in the directory.
+	- `python find_file_mismatches.py` - this script checks for any files that are listed in the metadata sheet but not found in the directory.
 	- `python ingest_[collectionname].py`
 
