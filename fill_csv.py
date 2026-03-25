@@ -1,9 +1,10 @@
 import pandas as pd
 import json
+import numpy as np
 
-# read in data for PMAET codebooks
-pma_datasets = pd.read_csv("pma_codebook_datasets.csv")
-pma_datafiles = pd.read_csv("pma_codebook_files.csv")
+# read in csvs for data and files
+pma_datasets = pd.read_csv("PATH TO FILLED PMA TEMPLATE DATASETS CSV")
+pma_datafiles = pd.read_csv("PATH TO FILLED PMA TEMPLATE FILES CSV")
 
 # remove whitespace and newlines
 pma_datasets['dv.title'] = pma_datasets['dv.title'].str.strip()
@@ -37,7 +38,19 @@ pma_datasets['dv.author'] = author_column
 
 # set dv.dsDescription to Description after converting to json format
 # [{"dsDescriptionValue": "[[Description from PMA sheet]]"}]
-pma_datasets['dv.dsDescription'] = '[{"dsDescriptionValue": "' + pma_datasets['dv.dsDescription'] +'"}]'
+# include links to codebooks as last sentence in description
+# CHANGE THIS ONCE CODEBOOKS UPLOADED
+pma_datasets['dv.dsDescription'] = np.where(pma_datasets['dv.title'].str.contains("Service Delivery Point"), 
+                                         '[{"dsDescriptionValue": "' + pma_datasets['dv.dsDescription'] + ' More information about this dataset can be found in the corresponding codebook, accessible at <a href=https://doi.org/10.34976/f0vf-qd73>https://doi.org/10.34976/f0vf-qd73</a>' + '"}]',
+                                         np.where(pma_datasets['dv.title'].str.contains("Client Exit"), 
+                                          '[{"dsDescriptionValue": "' + pma_datasets['dv.dsDescription'] + ' More information about this dataset can be found in the corresponding codebook, accessible at <a href=https://doi.org/10.34976/1hrp-p268>https://doi.org/10.34976/1hrp-p268</a>' + '"}]',
+                                          np.where(pma_datasets['dv.title'].str.contains("Household and Female"),
+                                            '[{"dsDescriptionValue": "' + pma_datasets['dv.dsDescription'] + ' More information about this dataset can be found in the corresponding codebook, accessible at <a href=https://doi.org/10.34976/cjvx-z226>https://doi.org/10.34976/cjvx-z226</a>' + '"}]',
+                                            '[{"dsDescriptionValue": "' + pma_datasets['dv.dsDescription'] + '"}]')))
+
+# Add link to codebook in related material 
+
+pma_datasets['dv.relatedMaterial'] = ['["Codebook: <a href=https://doi.org/10.34976/f0vf-qd73>https://doi.org/10.34976/f0vf-qd73</a>"]' if 'Service Delivery Point' in x else '["Codebook: <a href=https://doi.org/10.34976/1hrp-p268>https://doi.org/10.34976/1hrp-p268</a>"]' if 'Client Exit' in x else '["Codebook: <a href=https://doi.org/10.34976/cjvx-z226>https://doi.org/10.34976/cjvx-z226</a>"]' if 'Household and Female' in x else '["None"]' for x in pma_datasets['dv.title']]
 
 # set dv.license to CC BY-NC 4.0
 pma_datasets['dv.license'] = "CC BY-NC-SA 4.0"
@@ -80,10 +93,10 @@ keyword_column = [json.dumps(x, ensure_ascii = False) for x in keyword_column]
 pma_datasets['dv.keyword'] = keyword_column
 
 # set dv.topicClassification to [{"topicClassValue": "Maternal and Newborn Health"}]
-pma_datasets['dv.topicClassification'] = '[{"topicClassValue": "Family Planning and Reproductive Health"}]'
+pma_datasets['dv.topicClassification'] = ['[{"topicClassValue": "Covid-19"}]' if 'Covid-19' in x else '[{"topicClassValue": "Family Planning and Reproductive Health"}]' for x in pma_datasets['dv.title']]
 
 # set dv.language to ["English"]
-pma_datasets['dv.language'] = '["English"]'
+pma_datasets['dv.language'] = ['["English", "French"]' if any(s in x for s in ('Niger Phase', 'Ivoire', 'Democratic Republic of Congo', 'Burkina')) else '["English"]' for x in pma_datasets['dv.title']]
 
 # set dv.grantNumber to agency and grant number
 pma_datasets['dv.grantNumber'] = '[{"grantNumberAgency": "' + pma_datasets['dv.funder'] + '", "grantNumberValue": "' + pma_datasets['dv.grantNum'].astype(str) +'"}]'
@@ -117,18 +130,21 @@ pma_datasets = pma_datasets[["org.dataset_id",
               "dv.language",
               "dv.grantNumber",
               "dv.kindOfData",
+              "dv.relatedMaterial",
               "dv.datasetContact",
               "dv.distributor",
               "dv.producer"]]
 
-pma_datasets.to_csv("pma_codebook_datasets_toupload.csv", index=False)
+pma_datasets.to_csv("pma_datasets_toupload.csv", index=False)
 
 # map the file dataset names to the dataset ids in pma_datasets
 pma_datafiles = pma_datafiles.merge(pma_datasets[['dv.title', 'org.dataset_id']], how = "left", on = "dv.title")
 
+pma_datafiles['org.dataset_id'] = [x for x in pma_datafiles['org.dataset_id']]
+
 # increment datafiles 
 pma_datafiles['org.datafile_id'] = range(1, len(pma_datafiles['dv.title'])+1)
 
-pma_datafiles = pma_datafiles[['org.datafile_id', 'org.dataset_id', 'org.filename']]
+pma_datafiles = pma_datafiles[['org.datafile_id', 'org.dataset_id', 'org.filename', 'folder']]
 
-pma_datafiles.to_csv("pma_codebook_files_toupload.csv", index=False)
+pma_datafiles.to_csv("pma_files_toupload.csv", index=False)

@@ -14,21 +14,8 @@ We adapted the pydataverse CSV templates to be user-friendly to PMA, and then wr
 
 ### Files in this Repository
 - `PMA_metadata_template.xlsx`: the template we provided to PMA to fill out with metadata about the collections, datasets, and files to be uploaded
-- `PMAET` - scripts to upload data to the PMA Ethiopia Collection
-	- `fill_pmaet_codebook_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA Ethiopia codebooks.
-	- `ingest_pmaet_codebook.py` - Python script to upload files to the PMA Ethiopia codebook datasets.
-	- `fill_pmaet_dataset_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA Ethiopia datasets.
-	- `ingest_pmaet.py` - Python script to upload files to the PMA Ethiopia datasets.
-- `PMA2020` - scripts to upload data to the PMA2020 Collection
-	- `fill_pma2020_codebook_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA 2020 codebooks.
-	- `ingest_pma2020_codebook.py` - Python script to upload files to the PMA 2020 codebook datasets.
-	- `fill_pma2020_dataset_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA 2020 datasets.
-	- `ingest_pma2020.py` - Python script to upload files to the PMA 2020 datasets.
-- `PMA` - scripts to upload data to the PMA Collection
-	- `fill_pma_codebook_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA codebooks.
-	- `ingest_pma_codebook.py` - Python script to upload files to the PMA codebook datasets.
-	- `fill_pma_dataset_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA datasets.
-	- `ingest_pma.py` - Python script to upload files to the PMA datasets.
+- `fill_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA datasets.
+- `ingest_csv.py` - Python script to upload files to the PMA datasets.
 - `find_file_mismatches.py` - identifies files that are listed in the metadata sheet but not found in the file directory. This script can be placed in each subfolder to be run for each collection.
 
 ### Files not in this Repository
