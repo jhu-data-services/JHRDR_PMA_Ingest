@@ -10,17 +10,25 @@ PMA (Performance Monitoring for Accountability) is an research group at the Scho
 
 We utilized the [Import CSV to Dataverse](https://pydataverse.readthedocs.io/en/latest/user/advanced-usage.html) functionality of the python package `pydataverse`. 
 
-We adapted the pydataverse CSV templates to be user-friendly to PMA, and then wrote python scripts to transform the metadata we received from them into the CSV template format and to automate the upload of the metadata and files into JHRDR.
+We adapted the pydataverse CSV templates to be user-friendly to PMA, and then wrote python scripts to transform the metadata we received from them into the CSV template format and to automate the upload of the metadata and files into JHRDR. 
 
 ### Files in this Repository
 - `PMA_metadata_template.xlsx`: the template we provided to PMA to fill out with metadata about the collections, datasets, and files to be uploaded
 - `fill_csv.py` - Python script to transform the metadata recieved from PMA into the pydataverse csv template for batch dataset upload - for the PMA datasets.
 - `ingest_csv.py` - Python script to upload files to the PMA datasets.
-- `find_file_mismatches.py` - identifies files that are listed in the metadata sheet but not found in the file directory. This script can be placed in each subfolder to be run for each collection.
+- `find_file_mismatches.py` - identifies files that are listed in the metadata sheet but not found in the file directory. 
 
 ### Files not in this Repository
 
 For licensing reasons, the actual data files uploaded to JHRDR are not included in this repository. 
+
+### How to use/adapt this code
+
+The workflow is as follows:
+- Insert files to be uploaded into the same directory as `PMA_metadata_template.xlsx`. The files for each dataset should be in their own folder, with the name of that folder indicated in the "Folder Name" column of the files sheet of `PMA_metadata_template.xlsx`. (as described in the instructions sheet).
+- Run `fill_csv.py` to transform metadata collected in `PMA_metadata_template.xlsx` to the schema required for upload by pydataverse. This will output 2 files: `pma_datasets_toupload.csv` and `pma_files_toupload.csv`.
+- *Optional* Run `find_file_mismatches.py` to identify files that are listed in the files metadata csv but not found in the file directory.
+- Run `ingest_csv.py`, which reads in `pma_datasets_toupload.csv` and `pma_files_toupload.csv` and creates the datasets and upload their corresponding files to Dataverse. Be sure to change the value for `dv_alias` to the Dataverse you want to upload to.
 
 ### Requirements
 
@@ -30,20 +38,4 @@ For licensing reasons, the actual data files uploaded to JHRDR are not included 
 - `json`
 - `os`
 - `pydataverse 0.3.1`
-
-### Data Migration Procedure
-
-Below are the steps taken to batch upload the PMA data into JHRDR: 
-- Contact DataCite to transfer DOIs from the PMA account to our GDCC account (this enabled us to publish the datasets in our repository and maintain the same DOIs). 
-- Send metadata template to PMA and receive completed template.
-- Remove the first column and save the datasets and files sheets as csvs.
-- Break up the datasets and files csvs into separate csvs for each dataverses - we could have done this all in one metadata sheet and generalized the code more, but for testing purposes we broke it up by dataverse. Make sure the csvs are saved as CSV (UTF-8 encoded) in order to preserve the non-English characters in the metadata. We also separated the codebook dataset and file metadata for each dataverse - again, for testing purposes and because the other datasets link to the codebooks.
-- Into the same directory as the csvs, insert the files from PMA (in folders as described in the instructions in the metadata template)
-- Create dataverses in the Dataverse instance (as described in the collections tab of the metadata template) and insert the dataverse id into the `dv_alias` variable in the `ingest_` Python scripts.
-- To create datasets and upload files for a given collection, run the scripts in each subfolder in a bash shell (i.e. Terminal, Anaconda Prompt, Git Bash) in the following order:
-	- `python fill_[collectionname]_codebook_csv.py` 
-	- `python ingest_[collectionname]_codebook.py`
-	- `python fill_[collectionname]_dataset_csv.py`
-	- `python find_file_mismatches.py` - this script checks for any files that are listed in the metadata sheet but not found in the directory.
-	- `python ingest_[collectionname].py`
 
