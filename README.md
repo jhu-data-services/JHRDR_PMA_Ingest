@@ -39,3 +39,8 @@ The workflow is as follows:
 - `os`
 - `pydataverse 0.3.1`
 
+### Citation
+
+Please cite this material as:
+Johns Hopkins University Data Services. JHRDR_PMA_Ingest. https://github.com/jhu-data-services/JHRDR_PMA_Ingest
+
